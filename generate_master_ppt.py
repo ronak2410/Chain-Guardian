@@ -147,21 +147,14 @@ create_detail_slide(prs, "4. NVIDIA RAPIDS Acceleration", "Geospatial Computatio
     "Result: Reduces complex network vulnerability recalculations from minutes down to 1.8 seconds (a 25x simulated speedup over Pandas)."
 ], G_GREEN)
 
-# Slide 6: Enterprise Upgrades
-create_detail_slide(prs, "6. Enterprise & Competitor Parity", "Going Beyond Basic Dashboards", [
-    "Real-Time Vessel Visibility: Integrated live ship tracking directly into the map, matching features from platforms like Project44.",
-    "Multi-Tier Supplier Mapping: Analyzes cascading risks down to Tier-1 and Tier-2 suppliers, matching capabilities of Resilinc.",
-    "Predictive Climate Risk: Utilizes AI to calculate long-term climate risk indexes for individual nodes, rivaling Everstream Analytics."
-], G_BLUE)
-
-# Slide 7: The Future
-create_detail_slide(prs, "7. Phase 2 & Future Roadmap", "Autonomous Agentic Execution", [
+# Slide 6: Deep Dive 3
+create_detail_slide(prs, "5. Gemini AI Copilot", "Actionable Intelligence & Autonomous Strategy", [
     "Embedded Assistant: A glassmorphic, interactive chat widget directly integrated into the dashboard using Google Gemini.",
     "Context-Aware Reasoning: Gemini has full context of the network state. When a port turns 'Critical', the AI instantly calculates 'Cargo at Risk' value.",
     "Actionable Outputs: It doesn't just state the problem. It outputs executable strategies (e.g., 'Execute Alpha Fallback via Panama Canal') to mitigate financial loss."
 ], G_BLUE)
 
-# Slide 8: Tech Stack
+# Slide 7: Tech Stack
 create_detail_slide(prs, "6. Modern Technical Architecture", "Built for Speed and Scale", [
     "Frontend: React + Vite + TypeScript. Utilizes 'react-simple-maps' for beautiful geospatial rendering and 'framer-motion' for 60fps micro-animations.",
     "Backend: FastAPI (Python). Provides high-throughput async endpoints, CORS middleware, and live data aggregation.",
