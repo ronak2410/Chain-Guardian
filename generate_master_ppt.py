@@ -123,7 +123,9 @@ create_title_slide(prs)
 create_detail_slide(prs, "1. The Global Vulnerability", "Supply Chains Are Inherently Fragile", [
     "Traditional Risk Management is Reactive: Companies rely on delayed reports and manual data analysis when disasters strike.",
     "The Geospatial Blind Spot: Shipping routes and ports span the entire globe; monitoring them against live disasters is computationally expensive.",
-    "Catastrophic Financial Hemorrhage: When a port goes offline unexpectedly, millions of dollars in cargo are trapped, and rerouting decisions take days."
+    "Catastrophic Financial Hemorrhage: When a port goes offline unexpectedly, millions of dollars in cargo are trapped, and rerouting decisions take days.",
+    "Enterprise-Grade Architecture: 100% Automated Testing (Vitest & PyTest)",
+    "True Mobile-Responsive UI for On-the-Go Analytics"
 ], G_RED)
 
 # Slide 3: The Solution
@@ -165,7 +167,10 @@ create_detail_slide(prs, "6. Modern Technical Architecture", "Built for Speed an
 create_detail_slide(prs, "7. Business Impact & Future Vision", "The Future of Logistics", [
     "Immediate Value: Reduces emergency decision latency from 48 hours to 2 seconds, saving global logistics firms billions in trapped capital.",
     "Phase 2 - Live AIS: Integration with real-time ship transponder (AIS) data for per-ship granular tracking.",
-    "Phase 3 - Smart Contracts: Automated execution of freight rebooking via blockchain smart contracts the exact millisecond a disaster is confirmed."
+    "Phase 3 - Swarm Execution: Multiple AI agents negotiating carrier contracts.",
+    "Phase 4 - Blockchain Escrow: Smart contracts executing payouts upon reroute.",
+    "Phase 5 - NVIDIA Omniverse: 3D, physics-based digital twins simulating weather impact.",
+    "Phase 6 - CI/CD Evolution: Building upon our established Vitest/PyTest suites."
 ], G_GREEN)
 
 output_path = os.path.join(os.getcwd(), "CHAINGUARDIAN_MASTER_PITCH.pptx")
