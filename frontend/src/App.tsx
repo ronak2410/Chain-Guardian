@@ -185,12 +185,20 @@ function App() {
              value={selectedRegion} 
              onChange={(e) => setSelectedRegion(e.target.value)}
              className="control-btn" 
-             style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
+             style={{ 
+               backgroundColor: '#1e293b', 
+               color: '#e2e8f0', 
+               border: '1px solid #334155',
+               borderRadius: '6px',
+               padding: '8px 12px',
+               cursor: 'pointer',
+               outline: 'none'
+             }}
            >
-             <option value="All">All Regions</option>
-             <option value="Asia Pacific">Asia Pacific</option>
-             <option value="Europe">Europe</option>
-             <option value="North America">North America</option>
+             <option value="All" style={{ background: '#1e293b' }}>🌍 Global Overview</option>
+             <option value="Asia Pacific" style={{ background: '#1e293b' }}>🌏 Asia (CN, JP, KR, SG)</option>
+             <option value="Europe" style={{ background: '#1e293b' }}>🌍 Europe (UK, DE, NL)</option>
+             <option value="North America" style={{ background: '#1e293b' }}>🌎 North America (USA)</option>
            </select>
            <button onClick={() => setSimulating(!simulating)} className={`control-btn ${simulating ? 'active' : ''}`}>
               {simulating ? <RefreshCw size={16} className="spin" /> : <Play size={16} />} 
@@ -275,8 +283,10 @@ function App() {
 
         <div className="map-container" style={{ height: '70%', position: 'relative' }}>
           <div className="alert-ticker">
+            {/* @ts-ignore */}
             <marquee scrollamount="4">
               {activeAlerts.length > 0 ? activeAlerts.join('   |   ') : "No active alerts in monitored regions."}
+            {/* @ts-ignore */}
             </marquee>
           </div>
           <ComposableMap projection="geoMercator" projectionConfig={{ scale: 130 }} width={800} height={400} style={{ width: "100%", height: "100%" }}>
