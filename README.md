@@ -60,10 +60,17 @@ npm run dev
 ```
 *Access the dashboard at `http://localhost:5173`.*
 
-### Live Deployment Guide (For Hackathon Submission)
-If you wish to host this live on the internet:
-1. **Frontend**: Deploy the `frontend/` folder to **Vercel** or **Netlify**. It is pre-configured to build automatically.
-2. **Backend**: Deploy the `backend/` folder to **Render.com** (Free Tier Web Service) or **Google Cloud Run**. (Note: You will need to update the `fetch()` URLs in `App.tsx` to point to your new live backend URL instead of `localhost:8000`).
+### Live Deployment Guide (Hugging Face Spaces 🚀)
+The absolute easiest and most impressive way to deploy this for an AI hackathon is on **Hugging Face Spaces**. We have pre-configured a unified Docker container just for this!
+
+1. Go to **[Hugging Face Spaces](https://huggingface.co/spaces)** and click **Create new Space**.
+2. Name your space (e.g., `ChainGuardian`), select **Docker** as the Space SDK, and click **Create Space**.
+3. You will be given a command to add a git remote. Open your local terminal in the project root and push your code:
+```bash
+git remote add space https://huggingface.co/spaces/<your-username>/ChainGuardian
+git push space main
+```
+Hugging Face will automatically build the master `Dockerfile` in the root of this repo, combine the React frontend and FastAPI backend into a single server, and give you a live URL instantly!
 
 ## Hackathon Pitch Highlights
 * **High Impact:** Solves a multi-billion dollar enterprise problem (supply chain disruption).

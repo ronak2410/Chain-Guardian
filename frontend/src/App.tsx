@@ -80,12 +80,12 @@ function App() {
   const fetchData = async () => {
     try {
       const [nodesRes, metricsRes, insightRes, trendsRes, logsRes, eventsRes] = await Promise.all([
-        fetch('http://localhost:8000/api/nodes').catch(() => null),
-        fetch('http://localhost:8000/api/metrics').catch(() => null),
-        fetch('http://localhost:8000/api/insights').catch(() => null),
-        fetch('http://localhost:8000/api/trends').catch(() => null),
-        fetch('http://localhost:8000/api/logs').catch(() => null),
-        fetch('http://localhost:8000/api/events').catch(() => null),
+        fetch('/api/nodes').catch(() => null),
+        fetch('/api/metrics').catch(() => null),
+        fetch('/api/insights').catch(() => null),
+        fetch('/api/trends').catch(() => null),
+        fetch('/api/logs').catch(() => null),
+        fetch('/api/events').catch(() => null),
       ]);
 
       if (nodesRes) {
