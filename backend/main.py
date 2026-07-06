@@ -139,13 +139,25 @@ def update_data():
             if risk_score > 0.7:
                 high_risk_count += 1
                 
+            is_critical = risk_score > 0.7
+            ai_routes = ["Reroute via Panama Canal", "Divert to Port of Long Beach", "Hold at anchor (48hrs)", "Air-freight critical stock", "Re-shore manufacturing to Mexico"]
+            
+            # Estimate Region based on longitude
+            lon = port["coordinates"][0]
+            region = "Asia Pacific" if 60 < lon < 180 else ("Europe" if -30 < lon < 60 else "North America")
+
             nodes.append({
                 "id": port["id"],
                 "name": port["name"],
                 "type": port["type"],
                 "coordinates": port["coordinates"],
+                "region": region,
                 "risk_score": risk_score,
-                "affected_by": affected_by
+                "affected_by": affected_by,
+                "status": "Critical Impact" if is_critical else "Normal Operations",
+                "cargo_value": f"${random.randint(1, 15)}.{random.randint(1, 9)}M",
+                "disruption_time": f"{random.randint(12, 96)} hrs" if is_critical else "None",
+                "ai_routing": random.choice(ai_routes) if is_critical else "Optimal route active"
             })
             
         cached_nodes = nodes

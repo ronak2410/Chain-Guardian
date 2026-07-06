@@ -77,6 +77,9 @@ function App() {
   // Node selection state
   const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
 
+  const [selectedRegion, setSelectedRegion] = useState('All');
+  const [activeAlerts, setActiveAlerts] = useState<string[]>([]);
+
   const fetchData = async () => {
     try {
       const [nodesRes, metricsRes, insightRes, trendsRes, logsRes, eventsRes] = await Promise.all([
@@ -97,9 +100,15 @@ function App() {
       if (insightRes) setInsight((await insightRes.json()).insight);
       if (trendsRes) setTrends((await trendsRes.json()).data);
       if (logsRes) setLogs((await logsRes.json()).logs);
-      if (eventsRes) setEvents((await eventsRes.json()).events);
-    } catch (error) {
-      console.error("Error fetching data", error);
+      
+      if (eventsRes) {
+        const eventsData = await eventsRes.json();
+        setEvents(eventsData.events || []);
+        const alerts = (eventsData.events || []).map((e: any) => `⚠️ ${e.type} ALERT: ${e.name} detected at lat ${e.lat.toFixed(2)}, lon ${e.lon.toFixed(2)}.`);
+        setActiveAlerts(alerts);
+      }
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -135,6 +144,17 @@ function App() {
         </div>
         
         <div className="header-controls">
+           <select 
+             value={selectedRegion} 
+             onChange={(e) => setSelectedRegion(e.target.value)}
+             className="control-btn" 
+             style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
+           >
+             <option value="All">All Regions</option>
+             <option value="Asia Pacific">Asia Pacific</option>
+             <option value="Europe">Europe</option>
+             <option value="North America">North America</option>
+           </select>
            <button onClick={() => setSimulating(!simulating)} className={`control-btn ${simulating ? 'active' : ''}`}>
               {simulating ? <RefreshCw size={16} className="spin" /> : <Play size={16} />} 
               {simulating ? 'Live Sync: ON' : 'Live Sync: PAUSED'}
@@ -217,6 +237,11 @@ function App() {
         </div>
 
         <div className="map-container" style={{ height: '70%', position: 'relative' }}>
+          <div className="alert-ticker">
+            <div className="ticker-content">
+              {activeAlerts.length > 0 ? activeAlerts.join(' | ') : "No active alerts in monitored regions."}
+            </div>
+          </div>
           <ComposableMap projection="geoMercator" projectionConfig={{ scale: 130 }} width={800} height={400} style={{ width: "100%", height: "100%" }}>
             <ZoomableGroup zoom={1} minZoom={1} maxZoom={8} translateExtent={[[0, 0], [800, 400]]}>
               <Geographies geography={geoUrl}>
@@ -259,7 +284,7 @@ function App() {
               ))}
 
               {/* Render Nodes */}
-              {nodes.map((node) => {
+              {nodes.filter((node) => selectedRegion === 'All' || node.region === selectedRegion).map((node) => {
                 const isHighRisk = node.risk_score > 0.7;
                 return (
                   <Marker key={node.id} coordinates={node.coordinates} onClick={() => setSelectedNode(node)} style={{ cursor: 'pointer' }}>
@@ -297,35 +322,56 @@ function App() {
               exit={{ x: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             >
-              <button className="close-btn" onClick={() => setSelectedNode(null)}><X size={20} /></button>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: 5 }}>{selectedNode.name}</h3>
-              <div style={{ color: '#60a5fa', fontSize: '0.85rem', marginBottom: 20 }}>{selectedNode.type}</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {selectedNode.name}
+                </h2>
+                <button onClick={() => setSelectedNode(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={20} /></button>
+              </div>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15, marginBottom: 20 }}>
-                 <div>
-                   <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Risk Score</div>
-                   <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: selectedNode.risk_score > 0.7 ? '#ef4444' : '#10b981' }}>
-                     {(selectedNode.risk_score * 100).toFixed(1)}%
-                   </div>
-                 </div>
-                 <div>
-                   <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Coordinates</div>
-                   <div style={{ fontSize: '0.9rem', fontFamily: 'monospace' }}>
-                     {selectedNode.coordinates[1].toFixed(2)}, {selectedNode.coordinates[0].toFixed(2)}
-                   </div>
-                 </div>
+              <div style={{ marginBottom: 20, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: 5 }}>Risk Status</div>
+                <div style={{ color: selectedNode.risk_score > 0.7 ? '#ef4444' : '#10b981', fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {selectedNode.risk_score > 0.7 ? <AlertTriangle size={18} /> : <ShieldCheck size={18} />}
+                  {selectedNode.status || (selectedNode.risk_score > 0.7 ? 'Critical Impact' : 'Normal Operations')}
+                </div>
               </div>
 
-              {selectedNode.affected_by.length > 0 && (
-                <div>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', marginBottom: 5 }}>Affected By</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {selectedNode.affected_by.map((event, idx) => (
-                      <span key={idx} style={{ background: 'rgba(239,68,68,0.2)', color: '#ef4444', padding: '4px 8px', borderRadius: 4, fontSize: '0.8rem' }}>
-                        {event}
-                      </span>
-                    ))}
+              <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+                <div style={{ flex: 1, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Cargo at Risk</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginTop: 5 }}>{selectedNode.cargo_value || "$0.0M"}</div>
+                </div>
+                <div style={{ flex: 1, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Est. Disruption</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginTop: 5, color: selectedNode.risk_score > 0.7 ? '#f59e0b' : 'white' }}>{selectedNode.disruption_time || "None"}</div>
+                </div>
+              </div>
+
+              {selectedNode.affected_by && selectedNode.affected_by.length > 0 && (
+                <div style={{ padding: 15, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 8, marginBottom: 20 }}>
+                  <div style={{ fontSize: '0.85rem', color: '#f87171', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <AlertTriangle size={16} /> Active Threats
                   </div>
+                  <ul style={{ margin: 0, paddingLeft: 20, color: '#fecaca', fontSize: '0.9rem' }}>
+                    {selectedNode.affected_by.map((event, idx) => (
+                      <li key={idx} style={{ marginBottom: 4 }}>{event}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {selectedNode.risk_score > 0.7 && (
+                <div className="glowing-panel pulse-glow" style={{ padding: 15, background: 'rgba(14, 165, 233, 0.1)', border: '1px solid rgba(14, 165, 233, 0.3)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.85rem', color: '#38bdf8', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <BrainCircuit size={16} /> AI Routing Recommendation
+                  </div>
+                  <div style={{ fontSize: '1rem', lineHeight: '1.4' }}>
+                    {selectedNode.ai_routing || "Hold at anchor (48hrs)"}
+                  </div>
+                  <button className="control-btn" style={{ marginTop: 15, width: '100%', justifyContent: 'center', background: '#0ea5e9', color: 'white' }}>
+                    Execute Reroute
+                  </button>
                 </div>
               )}
             </motion.div>
