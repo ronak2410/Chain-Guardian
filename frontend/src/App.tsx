@@ -310,8 +310,7 @@ function App() {
             {/* @ts-ignore */}
             </marquee>
           </div>
-          <ComposableMap projection="geoMercator" projectionConfig={{ scale: 130 }} width={800} height={400} style={{ width: "100%", height: "100%" }}>
-            <ZoomableGroup zoom={1} minZoom={1} maxZoom={8} translateExtent={[[0, 0], [800, 400]]}>
+          <ComposableMap projection="geoMercator" projectionConfig={{ scale: 120 }}>
               <Geographies geography={geoUrl}>
                 {({ geographies }: { geographies: any[] }) =>
                   geographies.map((geo: any) => (
@@ -442,7 +441,6 @@ function App() {
                   <title>{vessel.name} - {vessel.route}</title>
                 </Marker>
               ))}
-            </ZoomableGroup>
           </ComposableMap>
           
           {/* Map Legend */}

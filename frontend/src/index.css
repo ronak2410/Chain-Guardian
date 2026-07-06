@@ -390,3 +390,34 @@ body {
   background: rgba(255,255,255,0.4);
 }
 
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  body {
+    overflow-y: auto;
+  }
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  .header {
+    flex-wrap: wrap;
+    gap: 15px;
+    height: auto;
+    padding: 15px;
+  }
+  .main-content {
+    min-height: 70vh;
+  }
+  .status-overlay {
+    top: 40px; /* clear the alert ticker */
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: 100%;
+  }
+  .header-badges {
+    flex-wrap: wrap;
+  }
+}
