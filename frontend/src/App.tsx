@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Activity, Cpu, ShieldCheck, Globe2, Zap, BrainCircuit, ActivityIcon, Play, RefreshCw, Send, X } from 'lucide-react';
+import { Activity, Cpu, ShieldCheck, Globe2, Zap, BrainCircuit, ActivityIcon, Play, RefreshCw, Send, X, AlertTriangle } from 'lucide-react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -8,12 +8,17 @@ import './index.css';
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 interface NodeData {
-  id: number;
+  id: string;
   name: string;
   type: string;
   coordinates: [number, number];
   risk_score: number;
   affected_by: string[];
+  region?: string;
+  status?: string;
+  cargo_value?: string;
+  disruption_time?: string;
+  ai_routing?: string;
 }
 
 interface EventData {
