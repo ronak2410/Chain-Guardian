@@ -487,6 +487,7 @@ function App() {
                 <div style={{ flex: 1, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
                   <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Est. Disruption</div>
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginTop: 5, color: selectedNode.risk_score > 0.7 ? '#f59e0b' : 'white' }}>{selectedNode.disruption_time || "None"}</div>
+                </div>
               </div>
               
               {/* Tier Mapping (Resilinc Competitor Feature) */}
@@ -539,6 +540,7 @@ function App() {
                 </div>
               )}
             </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Vessel Detail Slide-out Overlay (Project44 Competitor Feature) */}
