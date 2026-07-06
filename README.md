@@ -1,3 +1,11 @@
+---
+title: ChainGuardian
+emoji: 🌍
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
 # ChainGuardian: AI-Accelerated Supply Chain Risk Intelligence
 
 ![ChainGuardian Dashboard](https://img.shields.io/badge/Status-Prototype-success) ![NVIDIA RAPIDS](https://img.shields.io/badge/Powered_by-NVIDIA_RAPIDS-76B900) ![Google Gemini](https://img.shields.io/badge/Powered_by-Google_Gemini-4285F4)
