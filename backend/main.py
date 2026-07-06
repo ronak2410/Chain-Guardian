@@ -158,7 +158,10 @@ def update_data():
                 "status": "Critical Impact" if is_critical else "Normal Operations",
                 "cargo_value": f"${random.randint(1, 15)}.{random.randint(1, 9)}M",
                 "disruption_time": f"{random.randint(12, 96)} hrs" if is_critical else "None",
-                "ai_routing": random.choice(ai_routes) if is_critical else "Optimal route active"
+                "ai_routing": random.choice(ai_routes) if is_critical else "Optimal route active",
+                "tier_1_suppliers": random.randint(10, 50),
+                "tier_2_suppliers": random.randint(100, 500),
+                "climate_risk_index": f"{random.uniform(0.1, 0.9):.2f}"
             })
             
         cached_nodes = nodes
@@ -229,6 +232,32 @@ def get_events():
     return {
         "events": cached_events
     }
+
+@app.get("/api/vessels")
+def get_vessels():
+    # Simulate a few major live vessels connecting our main hubs
+    import random
+    vessels = [
+        {
+            "id": "v1", "name": "Maersk Alpha", "type": "Container Ship",
+            "coordinates": [(-118.24 + 121.47)/2 + random.uniform(-5, 5), (33.74 + 31.23)/2 + random.uniform(-5, 5)], # Middle of Pacific
+            "route": "Shanghai -> Los Angeles",
+            "eta": "12 Days", "cargo_value": "$145.2M", "status": "In Transit"
+        },
+        {
+            "id": "v2", "name": "Ever Given II", "type": "Container Ship",
+            "coordinates": [(103.81 + 55.02)/2 + random.uniform(-2, 2), (1.29 + 24.98)/2 + random.uniform(-2, 2)], # Indian Ocean
+            "route": "Singapore -> Dubai",
+            "eta": "4 Days", "cargo_value": "$88.9M", "status": "In Transit"
+        },
+        {
+            "id": "v3", "name": "MSC Oliver", "type": "Container Ship",
+            "coordinates": [(-74.00 + 4.09)/2 + random.uniform(-3, 3), (40.71 + 51.94)/2 + random.uniform(-3, 3)], # Atlantic
+            "route": "New York -> Rotterdam",
+            "eta": "6 Days", "cargo_value": "$112.4M", "status": "In Transit"
+        }
+    ]
+    return {"vessels": vessels}
 
 # --- Hugging Face Spaces / Single Container Integration ---
 import os

@@ -19,6 +19,20 @@ interface NodeData {
   cargo_value?: string;
   disruption_time?: string;
   ai_routing?: string;
+  tier_1_suppliers?: number;
+  tier_2_suppliers?: number;
+  climate_risk_index?: string;
+}
+
+interface VesselData {
+  id: string;
+  name: string;
+  type: string;
+  coordinates: [number, number];
+  route: string;
+  eta: string;
+  cargo_value: string;
+  status: string;
 }
 
 interface EventData {
@@ -71,6 +85,7 @@ const Typewriter = ({ text }: { text: string }) => {
 function App() {
   const [nodes, setNodes] = useState<NodeData[]>([]);
   const [events, setEvents] = useState<EventData[]>([]);
+  const [vessels, setVessels] = useState<VesselData[]>([]);
   const [highRiskCount, setHighRiskCount] = useState(0);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [insight, setInsight] = useState<string>('');
@@ -81,6 +96,7 @@ function App() {
   
   // Node selection state
   const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
+  const [selectedVessel, setSelectedVessel] = useState<VesselData | null>(null);
 
   const [selectedRegion, setSelectedRegion] = useState('All');
   const [activeAlerts, setActiveAlerts] = useState<string[]>([]);
@@ -119,13 +135,14 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [nodesRes, metricsRes, insightRes, trendsRes, logsRes, eventsRes] = await Promise.all([
+      const [nodesRes, metricsRes, insightRes, trendsRes, logsRes, eventsRes, vesselsRes] = await Promise.all([
         fetch('/api/nodes').catch(() => null),
         fetch('/api/metrics').catch(() => null),
         fetch('/api/insights').catch(() => null),
         fetch('/api/trends').catch(() => null),
         fetch('/api/logs').catch(() => null),
         fetch('/api/events').catch(() => null),
+        fetch('/api/vessels').catch(() => null),
       ]);
 
       if (nodesRes) {
@@ -143,6 +160,10 @@ function App() {
         setEvents(eventsData.events || []);
         const alerts = (eventsData.events || []).map((e: any) => `⚠️ ${e.type} ALERT: ${e.name} detected at lat ${e.lat.toFixed(2)}, lon ${e.lon.toFixed(2)}.`);
         setActiveAlerts(alerts);
+      }
+      if (vesselsRes) {
+        const vesselsData = await vesselsRes.json();
+        setVessels(vesselsData.vessels || []);
       }
     } catch (e) {
       console.error(e);
@@ -393,6 +414,34 @@ function App() {
                   </Marker>
                 );
               })}
+              
+              {/* Render Live Vessels */}
+              {vessels.map((vessel) => (
+                <Marker key={vessel.id} coordinates={vessel.coordinates} onClick={() => { setSelectedVessel(vessel); setSelectedNode(null); }} style={{ cursor: 'pointer' }}>
+                  <motion.path
+                    d="M-4,-4 L4,0 L-4,4 Z" // Simple Ship Triangle
+                    fill="#3b82f6"
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: 1, scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    style={{ filter: 'drop-shadow(0px 0px 4px rgba(59, 130, 246, 0.8))' }}
+                  />
+                  <text
+                    textAnchor="middle"
+                    y={-8}
+                    style={{
+                      fontFamily: 'system-ui',
+                      fill: '#38bdf8',
+                      fontSize: '5px',
+                      fontWeight: 600,
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {vessel.name.toUpperCase()}
+                  </text>
+                  <title>{vessel.name} - {vessel.route}</title>
+                </Marker>
+              ))}
             </ZoomableGroup>
           </ComposableMap>
           
@@ -438,6 +487,28 @@ function App() {
                 <div style={{ flex: 1, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
                   <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Est. Disruption</div>
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginTop: 5, color: selectedNode.risk_score > 0.7 ? '#f59e0b' : 'white' }}>{selectedNode.disruption_time || "None"}</div>
+              </div>
+              
+              {/* Tier Mapping (Resilinc Competitor Feature) */}
+              <div style={{ marginBottom: 20, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: 10 }}>Multi-Tier Supplier Dependencies</div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <div style={{ flex: 1, padding: 10, background: 'rgba(255,255,255,0.02)', borderRadius: 6, borderLeft: '2px solid #8b5cf6' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Tier-1 Suppliers</div>
+                    <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>{selectedNode.tier_1_suppliers || 0}</div>
+                  </div>
+                  <div style={{ flex: 1, padding: 10, background: 'rgba(255,255,255,0.02)', borderRadius: 6, borderLeft: '2px solid #3b82f6' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Tier-2 Suppliers</div>
+                    <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>{selectedNode.tier_2_suppliers || 0}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Predictive Climate Risk (Everstream Competitor Feature) */}
+              <div style={{ marginBottom: 20, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Predictive Climate Risk Index</div>
+                <div style={{ color: Number(selectedNode.climate_risk_index || 0) > 0.6 ? '#f59e0b' : '#10b981', fontWeight: 'bold' }}>
+                  {selectedNode.climate_risk_index || "0.00"}
                 </div>
               </div>
 
@@ -467,6 +538,49 @@ function App() {
                   </button>
                 </div>
               )}
+            </motion.div>
+        </AnimatePresence>
+
+        {/* Vessel Detail Slide-out Overlay (Project44 Competitor Feature) */}
+        <AnimatePresence>
+          {selectedVessel && (
+            <motion.div 
+              className="node-detail-panel"
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              style={{ maxHeight: '75vh', overflowY: 'auto' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10, color: '#38bdf8' }}>
+                  {selectedVessel.name}
+                </h2>
+                <button onClick={() => setSelectedVessel(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={20} /></button>
+              </div>
+              
+              <div style={{ marginBottom: 20, padding: 15, background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: 8 }}>
+                <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: 5 }}>Real-Time Status</div>
+                <div style={{ color: '#38bdf8', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                  {selectedVessel.status}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+                <div style={{ flex: 1, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Live Route</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 'bold', marginTop: 5 }}>{selectedVessel.route}</div>
+                </div>
+                <div style={{ flex: 1, padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Est. Arrival (ETA)</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginTop: 5 }}>{selectedVessel.eta}</div>
+                </div>
+              </div>
+              
+              <div style={{ padding: 15, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                 <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: 5 }}>Live Cargo Value Onboard</div>
+                 <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>{selectedVessel.cargo_value}</div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
