@@ -243,9 +243,9 @@ function App() {
 
         <div className="map-container" style={{ height: '70%', position: 'relative' }}>
           <div className="alert-ticker">
-            <div className="ticker-content">
-              {activeAlerts.length > 0 ? activeAlerts.join(' | ') : "No active alerts in monitored regions."}
-            </div>
+            <marquee scrollamount="4">
+              {activeAlerts.length > 0 ? activeAlerts.join('   |   ') : "No active alerts in monitored regions."}
+            </marquee>
           </div>
           <ComposableMap projection="geoMercator" projectionConfig={{ scale: 130 }} width={800} height={400} style={{ width: "100%", height: "100%" }}>
             <ZoomableGroup zoom={1} minZoom={1} maxZoom={8} translateExtent={[[0, 0], [800, 400]]}>

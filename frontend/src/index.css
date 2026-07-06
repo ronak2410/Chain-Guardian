@@ -76,15 +76,6 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.ticker-content {
-  display: inline-block;
-  animation: scroll-ticker 120s linear infinite;
-}
-
-@keyframes scroll-ticker {
-  0% { transform: translateX(100vw); }
-  100% { transform: translateX(-100%); }
-}
 
 .header-title {
   display: flex;
