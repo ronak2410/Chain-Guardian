@@ -338,6 +338,7 @@ function App() {
                 strokeWidth={1}
                 strokeLinecap="round"
                 style={{ strokeDasharray: "4 4", opacity: 0.5 }}
+                className="animated-route"
               />
               <MapLine
                 from={[4.4791, 51.9244]} // Rotterdam
@@ -346,6 +347,7 @@ function App() {
                 strokeWidth={1}
                 strokeLinecap="round"
                 style={{ strokeDasharray: "4 4", opacity: 0.5 }}
+                className="animated-route"
               />
               <MapLine
                 from={[55.2708, 25.2048]} // Dubai
@@ -354,6 +356,7 @@ function App() {
                 strokeWidth={1}
                 strokeLinecap="round"
                 style={{ strokeDasharray: "4 4", opacity: 0.5 }}
+                className="animated-route"
               />
 
               {/* Render Nodes */}
@@ -371,6 +374,22 @@ function App() {
                         initial={{ scale: 0.5, opacity: 1 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ repeat: Infinity, duration: 1.5 }}
                       />
                     )}
+                    <text
+                      textAnchor="middle"
+                      y={-10}
+                      style={{
+                        fontFamily: 'system-ui',
+                        fill: '#cbd5e1',
+                        fontSize: '6px',
+                        fontWeight: 600,
+                        letterSpacing: '0.5px',
+                        pointerEvents: 'none',
+                        textShadow: '0px 1px 2px rgba(0,0,0,0.8)'
+                      }}
+                    >
+                      {node.name.replace('Port of ', '').toUpperCase()}
+                    </text>
+                    <title>{node.name} - {node.type} (Risk: {(node.risk_score * 100).toFixed(0)}%)</title>
                   </Marker>
                 );
               })}
