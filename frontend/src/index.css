@@ -297,7 +297,8 @@ body {
 .logs-panel {
   height: 30%;
   border-top: 1px solid var(--border-color);
-  background: rgba(0,0,0,0.3);
+  background: #0f172a;
+  z-index: 20;
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
