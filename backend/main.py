@@ -1,3 +1,7 @@
+"""
+ChainGuardian API Backend.
+This module serves real-time GDACS geospatial disaster data and simulates NVIDIA RAPIDS processing.
+"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import time
@@ -6,7 +10,11 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
-app = FastAPI()
+app = FastAPI(
+    title="ChainGuardian API",
+    description="Backend API for the ChainGuardian supply chain risk dashboard.",
+    version="1.0.0"
+)
 
 # Allow CORS for the frontend
 app.add_middleware(

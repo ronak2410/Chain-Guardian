@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Cpu, AlertTriangle, ShieldCheck, Server, Globe2, Zap, BrainCircuit, ActivityIcon, Play, RefreshCw, Send, X } from 'lucide-react';
+import { Activity, ShieldCheck, Zap, BrainCircuit, ActivityIcon, Play, RefreshCw, Send, X } from 'lucide-react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -220,8 +220,8 @@ function App() {
           <ComposableMap projection="geoMercator" projectionConfig={{ scale: 130 }} width={800} height={400} style={{ width: "100%", height: "100%" }}>
             <ZoomableGroup zoom={1} minZoom={1} maxZoom={8} translateExtent={[[0, 0], [800, 400]]}>
               <Geographies geography={geoUrl}>
-                {({ geographies }) =>
-                  geographies.map((geo) => (
+                {({ geographies }: { geographies: any[] }) =>
+                  geographies.map((geo: any) => (
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
