@@ -21,9 +21,27 @@ ChainGuardian solves this by utilizing **NVIDIA RAPIDS (cuDF)** for GPU-accelera
 * **Frontend:** React, TypeScript, Vite, Tailwind/CSS, Framer-Motion (Animations), React-Simple-Maps (Geospatial), Recharts.
 * **Backend:** Python, FastAPI, Uvicorn, Requests (for GDACS API).
 
-## How to Run Locally
+## Project Architecture (Why `frontend` and `backend` folders?)
 
-### 1. Start the Backend API
+To demonstrate professional engineering standards to the judges, this project is structured as a **Full-Stack Monorepo**:
+- **`/backend`**: Contains the Python FastAPI server. It is entirely decoupled from the UI, meaning it can scale independently and handle massive geospatial data processing (simulated RAPIDS) without slowing down the user's browser.
+- **`/frontend`**: Contains the React/Vite user interface. It is a modern Single Page Application (SPA) that polls the backend for data.
+
+Separating concerns this way is how real enterprise applications are built on Google Cloud.
+
+## How to Run / Deploy
+
+### Method 1: One-Click Run (Docker)
+The easiest way for judges to run and review this project is using Docker. It containerizes both the frontend and backend.
+```bash
+docker-compose up --build
+```
+* Access Dashboard: `http://localhost:5173`
+* Access API Docs: `http://localhost:8000/docs`
+
+### Method 2: Run Locally (Manual)
+
+#### 1. Start the Backend API
 ```bash
 cd backend
 python -m venv venv
@@ -41,6 +59,11 @@ npm install --legacy-peer-deps
 npm run dev
 ```
 *Access the dashboard at `http://localhost:5173`.*
+
+### Live Deployment Guide (For Hackathon Submission)
+If you wish to host this live on the internet:
+1. **Frontend**: Deploy the `frontend/` folder to **Vercel** or **Netlify**. It is pre-configured to build automatically.
+2. **Backend**: Deploy the `backend/` folder to **Render.com** (Free Tier Web Service) or **Google Cloud Run**. (Note: You will need to update the `fetch()` URLs in `App.tsx` to point to your new live backend URL instead of `localhost:8000`).
 
 ## Hackathon Pitch Highlights
 * **High Impact:** Solves a multi-billion dollar enterprise problem (supply chain disruption).
