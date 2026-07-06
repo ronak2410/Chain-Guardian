@@ -9,6 +9,7 @@ import math
 import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime
+import random
 
 app = FastAPI(
     title="ChainGuardian API",
